@@ -102,6 +102,13 @@ export default class App extends Component<Props> {
           setBadge(0)
         </Text>
         <Text style={styles.welcome} onPress={() => {
+          XingePush.getBadge().then(data => {
+            alert('getBadge', data)
+          })
+        }}>
+          getBadge()
+        </Text>
+        <Text style={styles.welcome} onPress={() => {
           XingePush.setDebug(true)
         }}>
           setDebug(true)

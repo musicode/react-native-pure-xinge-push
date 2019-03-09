@@ -11,8 +11,9 @@ static NSString *XingePushEvent_BindTag = @"bindTag";
 static NSString *XingePushEvent_UnbindAccount = @"unbindAccount";
 static NSString *XingePushEvent_UnbindTag = @"unbindTag";
 
-static NSString *XingePushEvent_LaunchNotification = @"launchNotification";
 static NSString *XingePushEvent_Notification = @"notification";
+
+static NSDictionary *LaunchUserInfo = nil;
 
 @implementation RNTXingePushModule
 
@@ -24,11 +25,14 @@ static NSString *XingePushEvent_Notification = @"notification";
     [[XGPush defaultManager] reportXGNotificationInfo:launchOptions];
     // 点击推送启动 App
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
-        NSDictionary *userInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-        
+        LaunchUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+    }
+    else {
+        LaunchUserInfo = nil;
     }
 }
 
+// 低于 ios 10 需要调这个方法
 + (void)didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
     [[XGPush defaultManager] reportXGNotificationInfo:userInfo];
     completionHandler(UIBackgroundFetchResultNewData);
@@ -93,7 +97,10 @@ static NSString *XingePushEvent_Notification = @"notification";
     
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:userInfo];
     dict[@"clicked"] = @YES;
-    dict[@"background"] = state != UIApplicationStateActive ? @YES : @NO;
+    
+    if (state != UIApplicationStateActive) {
+        dict[@"background"] = @YES;
+    }
     
     [self sendEventWithName:XingePushEvent_Notification body:dict];
     
@@ -125,7 +132,6 @@ RCT_EXPORT_MODULE(RNTXingePush);
         XingePushEvent_BindTag,
         XingePushEvent_UnbindAccount,
         XingePushEvent_UnbindTag,
-        XingePushEvent_LaunchNotification,
         XingePushEvent_Notification
         ];
 }
@@ -133,6 +139,20 @@ RCT_EXPORT_MODULE(RNTXingePush);
 RCT_EXPORT_METHOD(start:(NSInteger)appID appKey:(NSString *)appKey) {
     [[XGPush defaultManager]startXGWithAppID:(uint32_t)appID appKey:appKey delegate:self];
     [XGPushTokenManager defaultTokenManager].delegate = self;
+    if (LaunchUserInfo != nil) {
+        
+        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:LaunchUserInfo];
+        LaunchUserInfo = nil;
+        
+        dict[@"clicked"] = @YES;
+        
+        // 表示通过点击推送打开 App
+        dict[@"launched"] = @YES;
+        dict[@"background"] = @YES;
+        
+        [self sendEventWithName:XingePushEvent_Notification body:dict];
+        
+    }
 }
 
 RCT_EXPORT_METHOD(stop) {

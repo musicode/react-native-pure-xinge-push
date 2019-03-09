@@ -7,6 +7,12 @@ const eventEmitter = new NativeEventEmitter(RNTXingePush)
 
 export default {
 
+  /**
+   * 启动信鸽推送服务，如果是通过点击推送打开的 App，调用 start 后会触发 notification 事件
+   *
+   * @param {number} accessId
+   * @param {string} accessKey
+   */
   start(accessId, accessKey) {
     if (typeof accessId !== 'number') {
       console.error(`[XingePush start] accessId is not a number.`)
@@ -17,34 +23,82 @@ export default {
     RNTXingePush.start(accessId, accessKey)
   },
 
+  /**
+   * 停止信鸽推送服务
+   */
   stop() {
     RNTXingePush.stop()
   },
 
+  /**
+   * 绑定帐号
+   *
+   * @param {string} account
+   */
   bindAccount(account) {
     RNTXingePush.bindAccount(account)
   },
 
+  /**
+   * 解绑帐号
+   *
+   * @param {string} account
+   */
   unbindAccount(account) {
     RNTXingePush.unbindAccount(account)
   },
 
+  /**
+   * 绑定标签
+   *
+   * @param {string} tag
+   */
   bindTag(tag) {
     RNTXingePush.bindTag(tag)
   },
 
+  /**
+   * 解绑标签
+   *
+   * @param {string} tag
+   */
   unbindTag(tag) {
     RNTXingePush.unbindTag(tag)
   },
 
+  /**
+   * 上报用户的定位，可实现按地区推送
+   *
+   * @param {number} latitude
+   * @param {number} longitude
+   */
   reportLocation(latitude, longitude) {
     RNTXingePush.reportLocation(latitude, longitude)
   },
 
-  setBadge(badgeNumber) {
-    RNTXingePush.setBadge(badgeNumber)
+  /**
+   * 获取当前角标数字
+   *
+   * @return {Promise} 返回 { badge: 0 }
+   */
+  getBadge() {
+    return RNTXingePush.getBadge()
   },
 
+  /**
+   * 设置当前角标数字
+   *
+   * @param {number} badge
+   */
+  setBadge(badge) {
+    RNTXingePush.setBadge(badge)
+  },
+
+  /**
+   * 设置是否开启调试模式，底层 SDK 会打印详细信息
+   *
+   * @param {boolean} enable
+   */
   setDebug(enable) {
     RNTXingePush.setDebug(enable)
   },
