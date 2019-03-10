@@ -252,7 +252,7 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
     }
 
     private void addCustomContent(WritableMap map, String customContent) {
-        if (customContent == null) {
+        if (customContent == null || customContent.isEmpty()) {
             return;
         }
         try {
