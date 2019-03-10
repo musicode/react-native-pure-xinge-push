@@ -16,9 +16,9 @@ static NSString *XingePushEvent_Notification = @"notification";
 static NSDictionary *LaunchUserInfo = nil;
 
 static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictionary *userInfo) {
-    
+
     NSMutableDictionary *customContent = [[NSMutableDictionary alloc] init];
-    
+
     NSEnumerator *enumerator = [userInfo keyEnumerator];
     id key;
     while ((key = [enumerator nextObject])) {
@@ -26,15 +26,15 @@ static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictio
             customContent[key] = userInfo[key];
         }
     }
-    
+
     NSDictionary *alert = userInfo[@"aps"][@"alert"];
     return @{
              @"clicked": @YES,
              @"custom_content": customContent,
              @"body": @{
-                     @"title": alert[@"title"],
-                     @"subtitle": alert[@"subtitle"],
-                     @"content": alert[@"body"]
+                     @"title": alert[@"title"] ?: @"",
+                     @"subtitle": alert[@"subtitle"] ?: @"",
+                     @"content": alert[@"body"] ?: @""
                      }
              };
 };
@@ -112,14 +112,14 @@ static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictio
 - (void)xgPushUserNotificationCenter:(UNUserNotificationCenter *)center
       didReceiveNotificationResponse:(UNNotificationResponse *)response
                withCompletionHandler:(void (^)(void))completionHandler __IOS_AVAILABLE(10.0) {
-    
+
     UNNotification *notification = response.notification;
-    
+
     // userInfo 包含了推送信息
     NSDictionary *userInfo = notification.request.content.userInfo;
 
     [self sendEventWithName:XingePushEvent_Notification body:getNotificationInfo(userInfo)];
-    
+
     [[XGPush defaultManager] reportXGNotificationResponse:response];
     completionHandler();
 }
