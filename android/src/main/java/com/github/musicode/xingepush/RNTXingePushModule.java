@@ -216,7 +216,7 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
         WritableMap map = Arguments.createMap();
         map.putString("title", title);
         map.putString("content", content);
-        map.putString("customContent", customContent);
+        map.putString("custom", customContent);
         sendEvent("message", map);
 
     }
@@ -230,11 +230,14 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
         boolean deleted = intent.getBooleanExtra("deleted", false);
 
         WritableMap map = Arguments.createMap();
-        map.putString("title", title);
-        map.putString("content", content);
-        map.putString("customContent", customContent);
         map.putBoolean("clicked", clicked);
         map.putBoolean("deleted", deleted);
+
+        WritableMap body = Arguments.createMap();
+        body.putString("title", title);
+        body.putString("content", content);
+        body.putString("custom", customContent);
+        map.putMap("body", body);
 
         sendEvent("notification", map);
 
