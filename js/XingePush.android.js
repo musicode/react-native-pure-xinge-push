@@ -33,6 +33,26 @@ export default {
   },
 
   /**
+   * 配置小米推送
+   *
+   * @param {number} appId
+   * @param {string} appKey
+   */
+  setXiaomi(appId, appKey) {
+    RNTXingePush.setXiaomi(appId, appKey)
+  },
+
+  /**
+   * 配置魅族推送
+   *
+   * @param {number} appId
+   * @param {string} appKey
+   */
+  setMeizu(appId, appKey) {
+    RNTXingePush.setMeizu(appId, appKey)
+  },
+
+  /**
    * 启动信鸽推送服务，如果是通过点击推送打开的 App，调用 start 后会触发 notification 事件
    *
    * @param {number} accessId
@@ -110,7 +130,7 @@ export default {
   },
 
   addListener(name, listener) {
-    return DeviceEventEmitter.addListener(name, listener)
+    DeviceEventEmitter.addListener(name, listener)
   }
 
 }

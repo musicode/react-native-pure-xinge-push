@@ -15,6 +15,18 @@ static NSString *XingePushEvent_Notification = @"notification";
 
 static NSDictionary *LaunchUserInfo = nil;
 
+static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictionary *userInfo) {
+    NSDictionary *alert = userInfo[@"aps"][@"alert"];
+    return @{
+             @"clicked": @YES,
+             @"body": @{
+                     @"title": alert[@"title"],
+                     @"subtitle": alert[@"subtitle"],
+                     @"content": alert[@"body"]
+                     }
+             };
+};
+
 @implementation RNTXingePushModule
 
 // 在主工程 AppDelegate.m 里调下面几个 did 开头的方法
@@ -93,11 +105,8 @@ static NSDictionary *LaunchUserInfo = nil;
     
     // userInfo 包含了推送信息
     NSDictionary *userInfo = notification.request.content.userInfo;
-    
-    NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:userInfo];
-    dict[@"clicked"] = @YES;
-    
-    [self sendEventWithName:XingePushEvent_Notification body:dict];
+
+    [self sendEventWithName:XingePushEvent_Notification body:getNotificationInfo(userInfo)];
     
     [[XGPush defaultManager] reportXGNotificationResponse:response];
     completionHandler();
@@ -135,17 +144,8 @@ RCT_EXPORT_METHOD(start:(NSInteger)appID appKey:(NSString *)appKey) {
     [[XGPush defaultManager]startXGWithAppID:(uint32_t)appID appKey:appKey delegate:self];
     [XGPushTokenManager defaultTokenManager].delegate = self;
     if (LaunchUserInfo != nil) {
-        
-        NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:LaunchUserInfo];
+        [self sendEventWithName:XingePushEvent_Notification body:getNotificationInfo(LaunchUserInfo)];
         LaunchUserInfo = nil;
-        
-        dict[@"clicked"] = @YES;
-        
-        // 表示通过点击推送打开 App
-        dict[@"launched"] = @YES;
-        
-        [self sendEventWithName:XingePushEvent_Notification body:dict];
-        
     }
 }
 
