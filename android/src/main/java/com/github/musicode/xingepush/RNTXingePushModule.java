@@ -1,27 +1,29 @@
 package com.github.musicode.xingepush;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.annotation.Nullable;
 
+import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tencent.android.tpush.XGIOperateCallback;
 import com.tencent.android.tpush.XGPushBaseReceiver;
-import com.tencent.android.tpush.XGPushClickedResult;
 import com.tencent.android.tpush.XGPushConfig;
 import com.tencent.android.tpush.XGPushManager;
-import com.tencent.android.tpush.XGPushTextMessage;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
-public class RNTXingePushModule extends ReactContextBaseJavaModule {
-
-    public static RNTXingePushModule instance;
+public class RNTXingePushModule extends ReactContextBaseJavaModule implements ActivityEventListener, LifecycleEventListener {
 
     private final ReactApplicationContext reactContext;
 
@@ -30,7 +32,9 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule {
     public RNTXingePushModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
-        instance = this;
+        reactContext.addActivityEventListener(this);
+        reactContext.addLifecycleEventListener(this);
+        registerReceivers();
     }
 
     @Override
@@ -54,13 +58,13 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void setMiPush(String appId, String appKey) {
+    public void setXiaomi(String appId, String appKey) {
         XGPushConfig.setMiPushAppId(reactContext, appId);
         XGPushConfig.setMiPushAppKey(reactContext, appKey);
     }
 
     @ReactMethod
-    public void setMZPush(String appId, String appKey) {
+    public void setMeizu(String appId, String appKey) {
         XGPushConfig.setMzPushAppId(reactContext, appId);
         XGPushConfig.setMzPushAppKey(reactContext, appKey);
     }
@@ -191,23 +195,23 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule {
         sendEvent("unbindAccount", map);
     }
 
-    public void onBindTag(int code) {
+    private void onBindTag(int code) {
         WritableMap map = Arguments.createMap();
         map.putInt("error", code);
         sendEvent("bindTag", map);
     }
 
-    public void onUnbindTag(int code) {
+    private void onUnbindTag(int code) {
         WritableMap map = Arguments.createMap();
         map.putInt("error", code);
         sendEvent("unbindTag", map);
     }
 
-    public void onMessage(XGPushTextMessage message) {
+    private void onMessage(Intent intent) {
 
-        String title = message.getTitle();
-        String content = message.getContent();
-        String customContent = message.getCustomContent();
+        String title = intent.getStringExtra("title");
+        String content = intent.getStringExtra("content");
+        String customContent = intent.getStringExtra("customContent");
 
         WritableMap map = Arguments.createMap();
         map.putString("title", title);
@@ -217,26 +221,83 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule {
 
     }
 
-    public void onNotifaction(XGPushClickedResult result) {
+    private void onNotifaction(Intent intent) {
 
-        String title = result.getTitle();
-        String content = result.getContent();
-        String customContent = result.getCustomContent();
+        String title = intent.getStringExtra("title");
+        String content = intent.getStringExtra("content");
+        String customContent = intent.getStringExtra("customContent");
+        boolean clicked = intent.getBooleanExtra("clicked", false);
+        boolean deleted = intent.getBooleanExtra("deleted", false);
 
         WritableMap map = Arguments.createMap();
         map.putString("title", title);
         map.putString("content", content);
         map.putString("customContent", customContent);
-
-        long actionType = result.getActionType();
-        if (actionType == XGPushClickedResult.NOTIFACTION_CLICKED_TYPE) {
-            map.putBoolean("clicked", true);
-        }
-        else if (actionType == XGPushClickedResult.NOTIFACTION_DELETED_TYPE) {
-            map.putBoolean("deleted", true);
-        }
+        map.putBoolean("clicked", clicked);
+        map.putBoolean("deleted", deleted);
 
         sendEvent("notification", map);
 
     }
+
+    @Override
+    public void onHostResume() {
+        XGPushManager.onActivityStarted(getCurrentActivity());
+    }
+
+    @Override
+    public void onHostPause() {
+        XGPushManager.onActivityStoped(getCurrentActivity());
+    }
+
+    @Override
+    public void onHostDestroy() {
+
+    }
+
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        Activity activity = getCurrentActivity();
+        if (activity != null) {
+            // 后台运行时点击通知会调用
+            activity.setIntent(intent);
+        }
+    }
+
+    private void registerReceivers() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constant.EVENT_BIND_TAG);
+        intentFilter.addAction(Constant.EVENT_UNBIND_TAG);
+        intentFilter.addAction(Constant.EVENT_MESSAGE);
+        intentFilter.addAction(Constant.EVENT_NOTIFICATION);
+
+        reactContext.registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                switch (intent.getAction()){
+                    case Constant.EVENT_BIND_TAG:
+                        onBindTag(intent.getIntExtra("code", -1));
+                        break;
+                    case Constant.EVENT_UNBIND_TAG:
+                        onUnbindTag(intent.getIntExtra("code", -1));
+                        break;
+                    case Constant.EVENT_MESSAGE:
+                        onMessage(intent);
+                        break;
+                    case Constant.EVENT_NOTIFICATION:
+                        onNotifaction(intent);
+                        break;
+                    default:
+                        break;
+                }
+
+            }
+        }, intentFilter);
+    }
+
 }
