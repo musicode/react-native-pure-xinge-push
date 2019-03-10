@@ -65,9 +65,6 @@ public class MessageReceiver extends XGPushBaseReceiver {
         String title = message.getTitle();
         String content = message.getContent();
         String customContent = message.getCustomContent();
-        if ("{}".equals(customContent)) {
-            customContent = "";
-        }
 
         intent.putExtra("title", title == null ? "" : title);
         intent.putExtra("content", content == null ? "" : content);
@@ -90,9 +87,6 @@ public class MessageReceiver extends XGPushBaseReceiver {
         String title = result.getTitle();
         String content = result.getContent();
         String customContent = result.getCustomContent();
-        if ("{}".equals(customContent)) {
-            customContent = "";
-        }
 
         intent.putExtra("title", title == null ? "" : title);
         intent.putExtra("content", content == null ? "" : content);

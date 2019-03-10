@@ -21,6 +21,11 @@ import com.tencent.android.tpush.XGPushBaseReceiver;
 import com.tencent.android.tpush.XGPushConfig;
 import com.tencent.android.tpush.XGPushManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Iterator;
+
 import me.leolin.shortcutbadger.ShortcutBadger;
 
 public class RNTXingePushModule extends ReactContextBaseJavaModule implements ActivityEventListener, LifecycleEventListener {
@@ -216,7 +221,9 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
         WritableMap map = Arguments.createMap();
         map.putString("title", title);
         map.putString("content", content);
-        map.putString("custom", customContent);
+
+        addCustomContent(map, customContent);
+
         sendEvent("message", map);
 
     }
@@ -236,11 +243,33 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
         WritableMap body = Arguments.createMap();
         body.putString("title", title);
         body.putString("content", content);
-        body.putString("custom", customContent);
         map.putMap("body", body);
+
+        addCustomContent(map, customContent);
 
         sendEvent("notification", map);
 
+    }
+
+    private void addCustomContent(WritableMap map, String customContent) {
+        if (customContent == null) {
+            return;
+        }
+        try {
+            JSONObject json = new JSONObject(customContent);
+            WritableMap body = Arguments.createMap();
+
+            Iterator<String> iterator = json.keys();
+            while (iterator.hasNext()) {
+                String key = iterator.next();
+                // 貌似信鸽只支持字符串
+                body.putString(key, json.getString(key));
+            }
+            map.putMap("custom_content", body);
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

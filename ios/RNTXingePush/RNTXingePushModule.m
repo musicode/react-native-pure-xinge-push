@@ -16,9 +16,21 @@ static NSString *XingePushEvent_Notification = @"notification";
 static NSDictionary *LaunchUserInfo = nil;
 
 static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictionary *userInfo) {
+    
+    NSMutableDictionary *customContent = [[NSMutableDictionary alloc] init];
+    
+    NSEnumerator *enumerator = [userInfo keyEnumerator];
+    id key;
+    while ((key = [enumerator nextObject])) {
+        if (![key isEqual: @"xg"] && ![key isEqual: @"aps"]) {
+            customContent[key] = userInfo[key];
+        }
+    }
+    
     NSDictionary *alert = userInfo[@"aps"][@"alert"];
     return @{
              @"clicked": @YES,
+             @"custom_content": customContent,
              @"body": @{
                      @"title": alert[@"title"],
                      @"subtitle": alert[@"subtitle"],
