@@ -1,9 +1,9 @@
 def getExtOrDefault(name) {
-    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['ReactNativeWebview_' + name]
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['ReactNativeXingePush_' + name]
 }
 
 def getExtOrIntegerDefault(name) {
-    return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['ReactNativeWebview_' + name]).toInteger()
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['ReactNativeXingePush_' + name]).toInteger()
 }
 
 apply plugin: 'com.android.library'

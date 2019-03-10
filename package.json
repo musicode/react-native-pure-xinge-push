@@ -1,6 +1,6 @@
 {
   "name": "react-native-pure-xinge-push",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "react native xinge push",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,6 @@
   },
   "homepage": "https://github.com/musicode/react-native-pure-xinge-push#readme",
   "dependencies": {
-    "prop-types": "^15.6.2"
+    "prop-types": "^15.7.2"
   }
 }
