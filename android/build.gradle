@@ -1,0 +1,34 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'com.facebook.react:react-native:+'
+
+    implementation "me.leolin:ShortcutBadger:1.1.22@aar"
+
+    implementation'com.tencent.xinge:xinge:4.3.2-beta'
+    // jg包
+    implementation'com.tencent.jg:jg:1.1'
+    // wup包
+    implementation 'com.tencent.wup:wup:1.0.0.E-release'
+    // mid包，minSdkVersion 14
+    implementation 'com.tencent.mid:mid:4.0.7-Release'
+
+    implementation 'com.tencent.xinge:mipush:4.3.2-xiaomi-beta'
+    implementation 'com.tencent.xinge:xgmz:4.3.2-meizu-beta'
+    implementation 'com.tencent.xinge:xghw:4.3.2-huawei-beta'
+
+}

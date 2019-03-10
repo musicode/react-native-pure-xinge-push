@@ -41,22 +41,23 @@ static NSDictionary *LaunchUserInfo = nil;
 // 信鸽服务启动的回调
 - (void)xgPushDidFinishStart:(BOOL)isSuccess error:(NSError *)error {
     [self sendEventWithName:XingePushEvent_Start body:@{
-                                                              @"error": isSuccess ? @"" : error ?: @""
+                                                        @"error": @(isSuccess ? 0 : error ? error.code : 0)
                                                               }];
 }
 
 // 信鸽服务停止的回调
 - (void)xgPushDidFinishStop:(BOOL)isSuccess error:(NSError *)error {
     [self sendEventWithName:XingePushEvent_Stop body:@{
-                                                              @"error": isSuccess ? @"" : error ?: @""
+                                                              @"error": @(isSuccess ? 0 : error ? error.code : 0)
                                                               }];
 }
 
 // 启动信鸽服务成功后，会触发此回调
 - (void)xgPushDidRegisteredDeviceToken:(NSString *)deviceToken error:(NSError *)error {
+    NSString *token = deviceToken ?: @"";
     [self sendEventWithName:XingePushEvent_Resgiter body:@{
-                                                           @"deviceToken": deviceToken ?: @"",
-                                                           @"error": error ?: @""
+                                                           @"deviceToken": token,
+                                                           @"error": @(token.length > 0 ? 0 : error ? error.code : 0)
                                                            }];
 }
 
@@ -64,7 +65,7 @@ static NSDictionary *LaunchUserInfo = nil;
 - (void)xgPushDidBindWithIdentifier:(NSString *)identifier type:(XGPushTokenBindType)type error:(NSError *)error {
     NSString *name = type == XGPushTokenBindTypeAccount ? XingePushEvent_BindAccount : XingePushEvent_BindTag;
     [self sendEventWithName:name body:@{
-                                        @"error": error ?: @""
+                                        @"error": @(error ? error.code : 0)
                                         }];
 }
 
@@ -72,7 +73,7 @@ static NSDictionary *LaunchUserInfo = nil;
 - (void)xgPushDidUnbindWithIdentifier:(NSString *)identifier type:(XGPushTokenBindType)type error:(NSError *)error {
     NSString *name = type == XGPushTokenBindTypeAccount ? XingePushEvent_UnbindAccount : XingePushEvent_UnbindTag;
     [self sendEventWithName:name body:@{
-                                        @"error": error ?: @""
+                                        @"error": @(error ? error.code : 0)
                                         }];
 }
 
@@ -93,14 +94,8 @@ static NSDictionary *LaunchUserInfo = nil;
     // userInfo 包含了推送信息
     NSDictionary *userInfo = notification.request.content.userInfo;
     
-    UIApplicationState state = [RCTSharedApplication() applicationState];
-    
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:userInfo];
     dict[@"clicked"] = @YES;
-    
-    if (state != UIApplicationStateActive) {
-        dict[@"background"] = @YES;
-    }
     
     [self sendEventWithName:XingePushEvent_Notification body:dict];
     
@@ -148,7 +143,6 @@ RCT_EXPORT_METHOD(start:(NSInteger)appID appKey:(NSString *)appKey) {
         
         // 表示通过点击推送打开 App
         dict[@"launched"] = @YES;
-        dict[@"background"] = @YES;
         
         [self sendEventWithName:XingePushEvent_Notification body:dict];
         
@@ -173,10 +167,6 @@ RCT_EXPORT_METHOD(bindTag:(NSString *)tag) {
 
 RCT_EXPORT_METHOD(unbindTag:(NSString *)tag) {
     [[XGPushTokenManager defaultTokenManager] unbindWithIdentifer:tag type:XGPushTokenBindTypeTag];
-}
-
-RCT_EXPORT_METHOD(reportLocation:(double)latitude longitude:(double)longitude) {
-    [[XGPush defaultManager] reportLocationWithLatitude:latitude longitude:longitude];
 }
 
 RCT_EXPORT_METHOD(setBadge:(NSInteger)badge) {
