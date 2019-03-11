@@ -11,8 +11,12 @@ import com.tencent.android.tpush.XGPushRegisterResult;
 import com.tencent.android.tpush.XGPushShowedResult;
 import com.tencent.android.tpush.XGPushTextMessage;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 // 信鸽的第三方推送经过它自己的封装后，会转发出以下两个 Intent，因此所有的推送在这个文件统一处理就行了
-// com.tencent.android.tpush.action.PUSH_MESSAGE 和 com.tencent.android.tpush.action.FEEDBACK
+// com.tencent.android.tpush.action.PUSH_MESSAGE
+// com.tencent.android.tpush.action.FEEDBACK
 
 public class MessageReceiver extends XGPushBaseReceiver {
 
@@ -65,6 +69,19 @@ public class MessageReceiver extends XGPushBaseReceiver {
         String title = message.getTitle();
         String content = message.getContent();
         String customContent = message.getCustomContent();
+
+        // 华为透传消息，会多一层 content
+        if (content != null && content.startsWith("{") && content.endsWith("}")) {
+            try {
+                JSONObject json = new JSONObject(content);
+                if (json.length() == 1 && json.has("content")) {
+                    content = json.getString("content");
+                }
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         intent.putExtra("title", title == null ? "" : title);
         intent.putExtra("content", content == null ? "" : content);
