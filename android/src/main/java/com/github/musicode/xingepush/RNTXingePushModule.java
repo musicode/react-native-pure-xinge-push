@@ -235,10 +235,12 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
         String customContent = intent.getStringExtra("customContent");
         boolean clicked = intent.getBooleanExtra("clicked", false);
         boolean deleted = intent.getBooleanExtra("deleted", false);
+        boolean showed = intent.getBooleanExtra("showed", false);
 
         WritableMap map = Arguments.createMap();
         map.putBoolean("clicked", clicked);
         map.putBoolean("deleted", deleted);
+        map.putBoolean("showed", showed);
 
         WritableMap body = Arguments.createMap();
         body.putString("title", title);

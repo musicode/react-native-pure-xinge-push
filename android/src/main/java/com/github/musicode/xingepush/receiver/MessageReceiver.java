@@ -110,8 +110,12 @@ public class MessageReceiver extends XGPushBaseReceiver {
         intent.putExtra("customContent", customContent == null ? "" : customContent);
 
         long actionType = result.getActionType();
-        intent.putExtra("clicked", actionType == XGPushClickedResult.NOTIFACTION_CLICKED_TYPE);
-        intent.putExtra("deleted", actionType == XGPushClickedResult.NOTIFACTION_DELETED_TYPE);
+        if (actionType == XGPushClickedResult.NOTIFACTION_CLICKED_TYPE) {
+            intent.putExtra("clicked", true);
+        }
+        if (actionType == XGPushClickedResult.NOTIFACTION_DELETED_TYPE) {
+            intent.putExtra("deleted", true);
+        }
 
         context.sendBroadcast(intent);
 
@@ -120,6 +124,24 @@ public class MessageReceiver extends XGPushBaseReceiver {
     @Override
     public void onNotifactionShowedResult(Context context, XGPushShowedResult result) {
 
+        if (context == null) {
+            return;
+        }
+
+        Log.d("XINGE", "[XINGE] onNotifactionShowedResult " + result.toString());
+
+        Intent intent = new Intent(Constant.EVENT_NOTIFICATION);
+        String title = result.getTitle();
+        String content = result.getContent();
+        String customContent = result.getCustomContent();
+
+        intent.putExtra("title", title == null ? "" : title);
+        intent.putExtra("content", content == null ? "" : content);
+        intent.putExtra("customContent", customContent == null ? "" : customContent);
+
+        intent.putExtra("showed", true);
+
+        context.sendBroadcast(intent);
 
     }
 }
