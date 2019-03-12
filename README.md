@@ -83,3 +83,75 @@ buildTypes {
     }
 }
 ```
+
+## 用法
+
+```js
+import XingePush from 'react-native-pure-xinge-push'
+
+// 安卓开启厂商推送
+XingePush.enableOtherPush(true)
+
+// 配置华为，appId 写在 `android/app/build.gradle`，这里不用传了
+// 这种脑残的方案也不知道是华为搞的还是信鸽搞的
+XingePush.setHuaweiDebug(true)
+// 配置小米 (number, string)
+XingePush.setXiaomi(appId, appKey)
+// 配置魅族 (number, string)
+XingePush.setMeizu(appId, appKey)
+
+// 安卓逻辑到此结束
+
+// 配置信鸽 (number, string)
+XingePush.start(xgAccessId, xgAccessKey)
+
+// 绑定帐号，字符串
+XingePush.bindAccount('account')
+
+// 解除绑定帐号，字符串
+XingePush.unbindAccount('account')
+
+// 绑定标签，字符串
+XingePush.bindTag('tag')
+
+// 解除绑定标签，字符串
+XingePush.unbindTag('tag')
+
+
+// 监听事件
+let result = XingePush.addEventListener('register', function (data) {
+  data.deviceToken
+  // 信鸽的错误码
+  data.error
+})
+// 解绑事件
+result.remove()
+
+// 透传消息
+XingePush.addEventListener('message', function (message) {
+  // ios 通过静默消息实现
+  // android 通过透传消息实现
+  // 为了跨平台的兼容性，message 的数据全部来自 custom content
+})
+
+// 推送消息
+XingePush.addEventListener('notification', function (notification) {
+
+  // 推送是否弹出展现了
+  notification.presented
+
+  // 推送是否被用户点击了
+  notification.clicked
+
+  // 自定义的键值对
+  notification.custom_content
+
+  // 推送消息主体，安卓没法保证能取到正确的值，最好不要依赖这个字段
+  notification.body
+})
+```
+
+## 声明
+
+保证会及时跟进最新版 SDK，放心使用。
+
