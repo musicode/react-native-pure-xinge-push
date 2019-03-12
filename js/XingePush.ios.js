@@ -131,7 +131,7 @@ export default {
     RNTXingePush.setBadge(badge)
   },
 
-  addListener(name, listener) {
+  addEventListener(name, listener) {
     eventEmitter.addListener(name, listener)
   }
 

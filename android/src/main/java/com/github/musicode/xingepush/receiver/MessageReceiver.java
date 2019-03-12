@@ -65,26 +65,12 @@ public class MessageReceiver extends XGPushBaseReceiver {
 
         Log.d("XINGE", "[XINGE] onTextMessage " + message.toString());
 
+        // ios 只能取到 custom content
+        // 因此安卓只取 custom content
+
         Intent intent = new Intent(Constant.EVENT_MESSAGE);
-        String title = message.getTitle();
-        String content = message.getContent();
+
         String customContent = message.getCustomContent();
-
-        // 华为透传消息，会多一层 content
-        if (content != null && content.startsWith("{") && content.endsWith("}")) {
-            try {
-                JSONObject json = new JSONObject(content);
-                if (json.length() == 1 && json.has("content")) {
-                    content = json.getString("content");
-                }
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        intent.putExtra("title", title == null ? "" : title);
-        intent.putExtra("content", content == null ? "" : content);
         intent.putExtra("customContent", customContent == null ? "" : customContent);
 
         context.sendBroadcast(intent);
@@ -139,7 +125,7 @@ public class MessageReceiver extends XGPushBaseReceiver {
         intent.putExtra("content", content == null ? "" : content);
         intent.putExtra("customContent", customContent == null ? "" : customContent);
 
-        intent.putExtra("showed", true);
+        intent.putExtra("presented", true);
 
         context.sendBroadcast(intent);
 

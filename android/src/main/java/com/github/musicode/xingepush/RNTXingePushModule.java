@@ -214,17 +214,9 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
 
     private void onMessage(Intent intent) {
 
-        String title = intent.getStringExtra("title");
-        String content = intent.getStringExtra("content");
         String customContent = intent.getStringExtra("customContent");
 
-        WritableMap map = Arguments.createMap();
-        map.putString("title", title);
-        map.putString("content", content);
-
-        addCustomContent(map, customContent);
-
-        sendEvent("message", map);
+        sendEvent("message", getCustomContent(customContent));
 
     }
 
@@ -235,43 +227,53 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
         String customContent = intent.getStringExtra("customContent");
         boolean clicked = intent.getBooleanExtra("clicked", false);
         boolean deleted = intent.getBooleanExtra("deleted", false);
-        boolean showed = intent.getBooleanExtra("showed", false);
+        boolean presented = intent.getBooleanExtra("presented", false);
 
         WritableMap map = Arguments.createMap();
-        map.putBoolean("clicked", clicked);
-        map.putBoolean("deleted", deleted);
-        map.putBoolean("showed", showed);
+        if (clicked) {
+            map.putBoolean("clicked", true);
+        }
+        if (deleted) {
+            map.putBoolean("deleted", true);
+        }
+        if (presented) {
+            map.putBoolean("presented", true);
+        }
 
         WritableMap body = Arguments.createMap();
         body.putString("title", title);
         body.putString("content", content);
         map.putMap("body", body);
 
-        addCustomContent(map, customContent);
+        map.putMap("custom_content", getCustomContent(customContent));
 
         sendEvent("notification", map);
 
     }
 
-    private void addCustomContent(WritableMap map, String customContent) {
+    private WritableMap getCustomContent(String customContent) {
+
+        WritableMap body = Arguments.createMap();
+
         if (customContent == null || customContent.isEmpty()) {
-            return;
+            return body;
         }
+
         try {
             JSONObject json = new JSONObject(customContent);
-            WritableMap body = Arguments.createMap();
-
             Iterator<String> iterator = json.keys();
             while (iterator.hasNext()) {
                 String key = iterator.next();
                 // 貌似信鸽只支持字符串
                 body.putString(key, json.getString(key));
             }
-            map.putMap("custom_content", body);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
+
+        return body;
+
     }
 
     @Override
