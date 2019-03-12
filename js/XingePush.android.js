@@ -130,7 +130,7 @@ export default {
   },
 
   addEventListener(name, listener) {
-    DeviceEventEmitter.addListener(name, listener)
+    return DeviceEventEmitter.addListener(name, listener)
   }
 
 }

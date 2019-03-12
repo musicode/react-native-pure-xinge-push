@@ -132,7 +132,7 @@ export default {
   },
 
   addEventListener(name, listener) {
-    eventEmitter.addListener(name, listener)
+    return eventEmitter.addListener(name, listener)
   }
 
 }
