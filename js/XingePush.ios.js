@@ -132,9 +132,6 @@ export default {
   },
 
   addListener(name, listener) {
-    if (name === 'message') {
-      return
-    }
     eventEmitter.addListener(name, listener)
   }
 

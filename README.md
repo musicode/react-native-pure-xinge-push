@@ -46,7 +46,6 @@ react-native link react-native-pure-xinge-push
   return YES;
 }
 
-// 支持 ios9 及以下加上这段
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
   [RNTXingePushModule didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }

@@ -11,14 +11,18 @@ static NSString *XingePushEvent_BindTag = @"bindTag";
 static NSString *XingePushEvent_UnbindAccount = @"unbindAccount";
 static NSString *XingePushEvent_UnbindTag = @"unbindTag";
 
+static NSString *XingePushEvent_Message = @"message";
 static NSString *XingePushEvent_Notification = @"notification";
 
-static NSDictionary *LaunchUserInfo = nil;
+static NSString *XingePushEvent_RemoteNotification = @"XingePushEvent_RemoteNotification";
 
-static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictionary *userInfo) {
+static NSDictionary *RNTXingePush_LaunchUserInfo = nil;
 
+// 获取自定义键值对
+static NSMutableDictionary* XingePush_GetCustomContent(NSDictionary *userInfo) {
+    
     NSMutableDictionary *customContent = [[NSMutableDictionary alloc] init];
-
+    
     NSEnumerator *enumerator = [userInfo keyEnumerator];
     id key;
     while ((key = [enumerator nextObject])) {
@@ -26,17 +30,27 @@ static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictio
             customContent[key] = userInfo[key];
         }
     }
+    
+    return customContent;
+};
+
+// 获取推送消息
+static NSMutableDictionary* XingePush_GetNotification(NSDictionary *userInfo) {
+
+    NSDictionary *customContent = XingePush_GetCustomContent(userInfo);
 
     NSDictionary *alert = userInfo[@"aps"][@"alert"];
-    return @{
-             @"clicked": @YES,
-             @"custom_content": customContent,
-             @"body": @{
-                     @"title": alert[@"title"] ?: @"",
-                     @"subtitle": alert[@"subtitle"] ?: @"",
-                     @"content": alert[@"body"] ?: @""
-                     }
-             };
+    
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    dict[@"custom_content"] = customContent;
+    dict[@"body"] = @{
+                      @"title": alert[@"title"] ?: @"",
+                      @"subtitle": alert[@"subtitle"] ?: @"",
+                      @"content": alert[@"body"] ?: @""
+                      };
+
+    return dict;
+    
 };
 
 @implementation RNTXingePushModule
@@ -49,17 +63,20 @@ static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictio
     [[XGPush defaultManager] reportXGNotificationInfo:launchOptions];
     // 点击推送启动 App
     if ([launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey]) {
-        LaunchUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
+        RNTXingePush_LaunchUserInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     }
     else {
-        LaunchUserInfo = nil;
+        RNTXingePush_LaunchUserInfo = nil;
     }
 }
 
-// 低于 ios 10 需要调这个方法
 + (void)didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+
     [[XGPush defaultManager] reportXGNotificationInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:XingePushEvent_RemoteNotification object:userInfo];
+    
     completionHandler(UIBackgroundFetchResultNewData);
+    
 }
 
 // 信鸽服务启动的回调
@@ -101,6 +118,30 @@ static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictio
                                         }];
 }
 
+- (void)didReceiveRemoteNotification:(NSNotification *)notification {
+
+    NSDictionary *userInfo = notification.object;
+    NSDictionary *aps = userInfo[@"aps"];
+
+    int contentAvailable = 0;
+    if ([aps objectForKey:@"content-available"]) {
+        contentAvailable = [[NSString stringWithFormat:@"%@", aps[@"content-available"]] intValue];
+    }
+
+    if (contentAvailable == 1) {
+        // 静默消息
+        [self sendEventWithName:XingePushEvent_Message body:XingePush_GetCustomContent(userInfo)];
+    }
+    else {
+        // 推送消息
+        NSMutableDictionary *dict = XingePush_GetNotification(userInfo);
+        dict[@"presented"] = @YES;
+        
+        [self sendEventWithName:XingePushEvent_Notification body:dict];
+    }
+
+}
+
 // iOS 10 新增 API
 // iOS 10 会走新 API, iOS 10 以前会走到老 API
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
@@ -114,13 +155,14 @@ static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictio
                withCompletionHandler:(void (^)(void))completionHandler __IOS_AVAILABLE(10.0) {
 
     UNNotification *notification = response.notification;
-
-    // userInfo 包含了推送信息
     NSDictionary *userInfo = notification.request.content.userInfo;
 
-    [self sendEventWithName:XingePushEvent_Notification body:getNotificationInfo(userInfo)];
-
     [[XGPush defaultManager] reportXGNotificationResponse:response];
+    
+    NSMutableDictionary *dict = XingePush_GetNotification(userInfo);
+    dict[@"clicked"] = @YES;
+    [self sendEventWithName:XingePushEvent_Notification body:dict];
+
     completionHandler();
 }
 
@@ -128,8 +170,15 @@ static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictio
 - (void)xgPushUserNotificationCenter:(UNUserNotificationCenter *)center
              willPresentNotification:(UNNotification *)notification
                withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler __IOS_AVAILABLE(10.0) {
+
     NSDictionary *userInfo = notification.request.content.userInfo;
+    
     [[XGPush defaultManager] reportXGNotificationInfo:userInfo];
+    
+    NSMutableDictionary *dict = XingePush_GetNotification(userInfo);
+    dict[@"presented"] = @YES;
+    [self sendEventWithName:XingePushEvent_Notification body:dict];
+
     completionHandler(UNNotificationPresentationOptionBadge | UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert);
 }
 
@@ -137,6 +186,20 @@ static NSDictionary* (^getNotificationInfo)(NSDictionary *userInfo) = ^(NSDictio
 
 
 RCT_EXPORT_MODULE(RNTXingePush);
+
+- (instancetype)init {
+    if (self = [super init]) {
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(didReceiveRemoteNotification:)
+                                             name:XingePushEvent_RemoteNotification
+                                             object:nil];
+    }
+    return self;
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter]removeObserver:self];
+}
 
 - (NSArray<NSString *> *)supportedEvents
 {
@@ -148,6 +211,7 @@ RCT_EXPORT_MODULE(RNTXingePush);
         XingePushEvent_BindTag,
         XingePushEvent_UnbindAccount,
         XingePushEvent_UnbindTag,
+        XingePushEvent_Message,
         XingePushEvent_Notification
         ];
 }
@@ -155,9 +219,11 @@ RCT_EXPORT_MODULE(RNTXingePush);
 RCT_EXPORT_METHOD(start:(NSInteger)appID appKey:(NSString *)appKey) {
     [[XGPush defaultManager]startXGWithAppID:(uint32_t)appID appKey:appKey delegate:self];
     [XGPushTokenManager defaultTokenManager].delegate = self;
-    if (LaunchUserInfo != nil) {
-        [self sendEventWithName:XingePushEvent_Notification body:getNotificationInfo(LaunchUserInfo)];
-        LaunchUserInfo = nil;
+    if (RNTXingePush_LaunchUserInfo != nil) {
+        NSMutableDictionary *dict = XingePush_GetNotification(RNTXingePush_LaunchUserInfo);
+        dict[@"clicked"] = @YES;
+        [self sendEventWithName:XingePushEvent_Notification body:dict];
+        RNTXingePush_LaunchUserInfo = nil;
     }
 }
 
