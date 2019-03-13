@@ -95,9 +95,9 @@ XingePush.enableOtherPush(true)
 // 配置华为，appId 写在 `android/app/build.gradle`，这里不用传了
 // 这种脑残的方案也不知道是华为搞的还是信鸽搞的
 XingePush.setHuaweiDebug(true)
-// 配置小米 (number, string)
+// 配置小米 (string, string)
 XingePush.setXiaomi(appId, appKey)
-// 配置魅族 (number, string)
+// 配置魅族 (string, string)
 XingePush.setMeizu(appId, appKey)
 
 // 安卓逻辑到此结束
@@ -105,16 +105,16 @@ XingePush.setMeizu(appId, appKey)
 // 配置信鸽 (number, string)
 XingePush.start(xgAccessId, xgAccessKey)
 
-// 绑定帐号，字符串
+// 绑定帐号 (string)
 XingePush.bindAccount('account')
 
-// 解除绑定帐号，字符串
+// 解除绑定帐号 (string)
 XingePush.unbindAccount('account')
 
-// 绑定标签，字符串
+// 绑定标签 (string)
 XingePush.bindTag('tag')
 
-// 解除绑定标签，字符串
+// 解除绑定标签 (string)
 XingePush.unbindTag('tag')
 
 
