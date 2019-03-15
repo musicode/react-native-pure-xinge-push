@@ -105,24 +105,30 @@ XingePush.setMeizu(appId, appKey)
 // 配置信鸽 (number, string)
 XingePush.start(xgAccessId, xgAccessKey)
 
-// 绑定帐号 (string)
-XingePush.bindAccount('account')
-
-// 解除绑定帐号 (string)
-XingePush.unbindAccount('account')
-
-// 绑定标签 (string)
-XingePush.bindTag('tag')
-
-// 解除绑定标签 (string)
-XingePush.unbindTag('tag')
-
-
 // 监听事件
 let result = XingePush.addEventListener('register', function (data) {
+
+  // 信鸽错误码
+  // ios: https://xg.qq.com/docs/ios_access/ios_returncode.html
+  // android: https://xg.qq.com/docs/android_access/android_returncode.html
+  if (data.error) {
+    return
+  }
+
+  // 获取 token
   data.deviceToken
-  // 信鸽的错误码
-  data.error
+
+  // 绑定帐号 (string)
+  XingePush.bindAccount('account')
+
+  // 解除绑定帐号 (string)
+  XingePush.unbindAccount('account')
+
+  // 绑定标签 (string)
+  XingePush.bindTag('tag')
+
+  // 解除绑定标签 (string)
+  XingePush.unbindTag('tag')
 })
 // 解绑事件
 result.remove()
