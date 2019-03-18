@@ -124,11 +124,11 @@ let result = XingePush.addEventListener('register', function (data) {
   // 解除绑定帐号 (string)
   XingePush.unbindAccount('account')
 
-  // 绑定标签 (string)
-  XingePush.bindTag('tag')
+  // 绑定标签 (Array)
+  XingePush.bindTags(['tag1', 'tag2'])
 
-  // 解除绑定标签 (string)
-  XingePush.unbindTag('tag')
+  // 解除绑定标签 (Array)
+  XingePush.unbindTags(['tag1', 'tag2'])
 })
 // 解绑事件
 result.remove()
@@ -138,6 +138,7 @@ XingePush.addEventListener('message', function (message) {
   // ios 通过静默消息实现
   // android 通过透传消息实现
   // 为了跨平台的兼容性，message 的数据全部来自 custom content
+  // message 类型为对象
 })
 
 // 推送消息
