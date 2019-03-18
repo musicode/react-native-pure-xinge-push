@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.annotation.Nullable;
+import android.support.v4.util.ArraySet;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Arguments;
@@ -14,6 +15,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.tencent.android.tpush.XGIOperateCallback;
@@ -25,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import me.leolin.shortcutbadger.ShortcutBadger;
 
@@ -112,7 +115,7 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
 
     @ReactMethod
     public void bindAccount(String account) {
-        XGPushManager.bindAccount(reactContext, account, new XGIOperateCallback() {
+        XGPushManager.appendAccount(reactContext, account, new XGIOperateCallback() {
             @Override
             public void onSuccess(Object data, int flag) {
                 onBindAccount(XGPushBaseReceiver.SUCCESS);
@@ -141,13 +144,21 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
     }
 
     @ReactMethod
-    public void bindTag(String tag) {
-        XGPushManager.setTag(reactContext, tag);
+    public void bindTags(ReadableArray tags) {
+        Set<String> set = new ArraySet<>();
+        for (int i = 0; i < tags.size(); i++) {
+            set.add(tags.getString(i));
+        }
+        XGPushManager.addTags(reactContext, "addTags", set);
     }
 
     @ReactMethod
-    public void unbindTag(String tag) {
-        XGPushManager.deleteTag(reactContext, tag);
+    public void unbindTags(ReadableArray tags) {
+        Set<String> set = new ArraySet<>();
+        for (int i = 0; i < tags.size(); i++) {
+            set.add(tags.getString(i));
+        }
+        XGPushManager.deleteTags(reactContext, "deleteTags", set);
     }
 
     @ReactMethod
@@ -200,16 +211,16 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
         sendEvent("unbindAccount", map);
     }
 
-    private void onBindTag(int code) {
+    private void onBindTags(int code) {
         WritableMap map = Arguments.createMap();
         map.putInt("error", code);
-        sendEvent("bindTag", map);
+        sendEvent("bindTags", map);
     }
 
-    private void onUnbindTag(int code) {
+    private void onUnbindTags(int code) {
         WritableMap map = Arguments.createMap();
         map.putInt("error", code);
-        sendEvent("unbindTag", map);
+        sendEvent("unbindTags", map);
     }
 
     private void onMessage(Intent intent) {
@@ -307,25 +318,25 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
 
     private void registerReceivers() {
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constant.EVENT_BIND_TAG);
-        intentFilter.addAction(Constant.EVENT_UNBIND_TAG);
-        intentFilter.addAction(Constant.EVENT_MESSAGE);
-        intentFilter.addAction(Constant.EVENT_NOTIFICATION);
+        intentFilter.addAction(Constant.ACTION_BIND_TAGS);
+        intentFilter.addAction(Constant.ACTION_UNBIND_TAGS);
+        intentFilter.addAction(Constant.ACTION_MESSAGE);
+        intentFilter.addAction(Constant.ACTION_NOTIFICATION);
 
         reactContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 switch (intent.getAction()){
-                    case Constant.EVENT_BIND_TAG:
-                        onBindTag(intent.getIntExtra("code", -1));
+                    case Constant.ACTION_BIND_TAGS:
+                        onBindTags(intent.getIntExtra("code", -1));
                         break;
-                    case Constant.EVENT_UNBIND_TAG:
-                        onUnbindTag(intent.getIntExtra("code", -1));
+                    case Constant.ACTION_UNBIND_TAGS:
+                        onUnbindTags(intent.getIntExtra("code", -1));
                         break;
-                    case Constant.EVENT_MESSAGE:
+                    case Constant.ACTION_MESSAGE:
                         onMessage(intent);
                         break;
-                    case Constant.EVENT_NOTIFICATION:
+                    case Constant.ACTION_NOTIFICATION:
                         onNotifaction(intent);
                         break;
                     default:

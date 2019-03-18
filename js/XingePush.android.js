@@ -96,19 +96,19 @@ export default {
   /**
    * 绑定标签
    *
-   * @param {string} tag
+   * @param {Array<string>} tags
    */
-  bindTag(tag) {
-    RNTXingePush.bindTag(tag)
+  bindTags(tags) {
+    RNTXingePush.bindTags(tags)
   },
 
   /**
    * 解绑标签
    *
-   * @param {string} tag
+   * @param {Array<string>} tags
    */
-  unbindTag(tag) {
-    RNTXingePush.unbindTag(tag)
+  unbindTags(tags) {
+    RNTXingePush.unbindTags(tags)
   },
 
   /**

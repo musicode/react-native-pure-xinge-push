@@ -7,9 +7,9 @@ static NSString *XingePushEvent_Stop = @"stop";
 static NSString *XingePushEvent_Resgiter = @"register";
 
 static NSString *XingePushEvent_BindAccount = @"bindAccount";
-static NSString *XingePushEvent_BindTag = @"bindTag";
+static NSString *XingePushEvent_BindTags = @"bindTags";
 static NSString *XingePushEvent_UnbindAccount = @"unbindAccount";
-static NSString *XingePushEvent_UnbindTag = @"unbindTag";
+static NSString *XingePushEvent_UnbindTags = @"unbindTags";
 
 static NSString *XingePushEvent_Message = @"message";
 static NSString *XingePushEvent_Notification = @"notification";
@@ -102,20 +102,32 @@ static NSMutableDictionary* XingePush_GetNotification(NSDictionary *userInfo) {
                                                            }];
 }
 
-// 绑定帐号或标签的回调
+// 绑定帐号的回调
 - (void)xgPushDidBindWithIdentifier:(NSString *)identifier type:(XGPushTokenBindType)type error:(NSError *)error {
-    NSString *name = type == XGPushTokenBindTypeAccount ? XingePushEvent_BindAccount : XingePushEvent_BindTag;
-    [self sendEventWithName:name body:@{
+    [self sendEventWithName:XingePushEvent_BindAccount body:@{
                                         @"error": @(error ? error.code : 0)
                                         }];
 }
 
-// 解除绑定帐号或标签的回调
+// 绑定标签的回调
+- (void)xgPushDidBindWithIdentifiers:(NSArray *)identifiers type:(XGPushTokenBindType)type error:(NSError *)error {
+    [self sendEventWithName:XingePushEvent_BindTags body:@{
+                                                              @"error": @(error ? error.code : 0)
+                                                              }];
+}
+
+// 解除绑定帐号的回调
 - (void)xgPushDidUnbindWithIdentifier:(NSString *)identifier type:(XGPushTokenBindType)type error:(NSError *)error {
-    NSString *name = type == XGPushTokenBindTypeAccount ? XingePushEvent_UnbindAccount : XingePushEvent_UnbindTag;
-    [self sendEventWithName:name body:@{
+    [self sendEventWithName:XingePushEvent_UnbindAccount body:@{
                                         @"error": @(error ? error.code : 0)
                                         }];
+}
+
+// 解除绑定标签的回调
+- (void)xgPushDidUnbindWithIdentifiers:(NSArray *)identifiers type:(XGPushTokenBindType)type error:(NSError *)error {
+    [self sendEventWithName:XingePushEvent_UnbindTags body:@{
+                                                                @"error": @(error ? error.code : 0)
+                                                                }];
 }
 
 - (void)didReceiveRemoteNotification:(NSNotification *)notification {
@@ -208,9 +220,9 @@ RCT_EXPORT_MODULE(RNTXingePush);
         XingePushEvent_Stop,
         XingePushEvent_Resgiter,
         XingePushEvent_BindAccount,
-        XingePushEvent_BindTag,
+        XingePushEvent_BindTags,
         XingePushEvent_UnbindAccount,
-        XingePushEvent_UnbindTag,
+        XingePushEvent_UnbindTags,
         XingePushEvent_Message,
         XingePushEvent_Notification
         ];
@@ -239,12 +251,12 @@ RCT_EXPORT_METHOD(unbindAccount:(NSString *)account) {
     [[XGPushTokenManager defaultTokenManager] unbindWithIdentifer:account type:XGPushTokenBindTypeAccount];
 }
 
-RCT_EXPORT_METHOD(bindTag:(NSString *)tag) {
-    [[XGPushTokenManager defaultTokenManager] bindWithIdentifier:tag type:XGPushTokenBindTypeTag];
+RCT_EXPORT_METHOD(bindTags:(NSArray *)tags) {
+    [[XGPushTokenManager defaultTokenManager] bindWithIdentifiers:tags type:XGPushTokenBindTypeTag];
 }
 
-RCT_EXPORT_METHOD(unbindTag:(NSString *)tag) {
-    [[XGPushTokenManager defaultTokenManager] unbindWithIdentifer:tag type:XGPushTokenBindTypeTag];
+RCT_EXPORT_METHOD(unbindTags:(NSArray *)tags) {
+    [[XGPushTokenManager defaultTokenManager] unbindWithIdentifers:tags type:XGPushTokenBindTypeTag];
 }
 
 RCT_EXPORT_METHOD(setBadge:(NSInteger)badge) {

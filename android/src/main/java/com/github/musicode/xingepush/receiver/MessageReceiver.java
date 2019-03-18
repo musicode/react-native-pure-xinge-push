@@ -37,7 +37,9 @@ public class MessageReceiver extends XGPushBaseReceiver {
             return;
         }
 
-        Intent intent = new Intent(Constant.EVENT_BIND_TAG);
+        Log.d("XINGE", "[XINGE] onSetTagResult " + code + " " + tagName);
+
+        Intent intent = new Intent(Constant.ACTION_BIND_TAGS);
         intent.putExtra("code", code);
         context.sendBroadcast(intent);
 
@@ -50,7 +52,9 @@ public class MessageReceiver extends XGPushBaseReceiver {
             return;
         }
 
-        Intent intent = new Intent(Constant.EVENT_UNBIND_TAG);
+        Log.d("XINGE", "[XINGE] onDeleteTagResult " + code + " " + tagName);
+
+        Intent intent = new Intent(Constant.ACTION_UNBIND_TAGS);
         intent.putExtra("code", code);
         context.sendBroadcast(intent);
 
@@ -68,7 +72,7 @@ public class MessageReceiver extends XGPushBaseReceiver {
         // ios 只能取到 custom content
         // 因此安卓只取 custom content
 
-        Intent intent = new Intent(Constant.EVENT_MESSAGE);
+        Intent intent = new Intent(Constant.ACTION_MESSAGE);
 
         String customContent = message.getCustomContent();
         intent.putExtra("customContent", customContent == null ? "" : customContent);
@@ -86,7 +90,7 @@ public class MessageReceiver extends XGPushBaseReceiver {
 
         Log.d("XINGE", "[XINGE] onNotifactionClickedResult " + result.toString());
 
-        Intent intent = new Intent(Constant.EVENT_NOTIFICATION);
+        Intent intent = new Intent(Constant.ACTION_NOTIFICATION);
         String title = result.getTitle();
         String content = result.getContent();
         String customContent = result.getCustomContent();
@@ -116,7 +120,7 @@ public class MessageReceiver extends XGPushBaseReceiver {
 
         Log.d("XINGE", "[XINGE] onNotifactionShowedResult " + result.toString());
 
-        Intent intent = new Intent(Constant.EVENT_NOTIFICATION);
+        Intent intent = new Intent(Constant.ACTION_NOTIFICATION);
         String title = result.getTitle();
         String content = result.getContent();
         String customContent = result.getCustomContent();
