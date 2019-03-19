@@ -11,9 +11,6 @@ import com.tencent.android.tpush.XGPushRegisterResult;
 import com.tencent.android.tpush.XGPushShowedResult;
 import com.tencent.android.tpush.XGPushTextMessage;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 // 信鸽的第三方推送经过它自己的封装后，会转发出以下两个 Intent，因此所有的推送在这个文件统一处理就行了
 // com.tencent.android.tpush.action.PUSH_MESSAGE
 // com.tencent.android.tpush.action.FEEDBACK

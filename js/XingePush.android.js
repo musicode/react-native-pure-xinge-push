@@ -35,20 +35,32 @@ export default {
   /**
    * 配置小米推送
    *
-   * @param {number} appId
+   * @param {string} appId
    * @param {string} appKey
    */
   setXiaomi(appId, appKey) {
+    if (typeof appId !== 'string') {
+      console.error(`[XingePush setXiaomi] appId is not a string.`)
+    }
+    if (typeof appKey !== 'string') {
+      console.error(`[XingePush setXiaomi] appKey is not a string.`)
+    }
     RNTXingePush.setXiaomi(appId, appKey)
   },
 
   /**
    * 配置魅族推送
    *
-   * @param {number} appId
+   * @param {string} appId
    * @param {string} appKey
    */
   setMeizu(appId, appKey) {
+    if (typeof appId !== 'string') {
+      console.error(`[XingePush setMeizu] appId is not a string.`)
+    }
+    if (typeof appKey !== 'string') {
+      console.error(`[XingePush setMeizu] appKey is not a string.`)
+    }
     RNTXingePush.setMeizu(appId, appKey)
   },
 
@@ -81,6 +93,9 @@ export default {
    * @param {string} account
    */
   bindAccount(account) {
+    if (typeof account !== 'string') {
+      console.error(`[XingePush bindAccount] account is not a string.`)
+    }
     RNTXingePush.bindAccount(account)
   },
 
@@ -90,6 +105,9 @@ export default {
    * @param {string} account
    */
   unbindAccount(account) {
+    if (typeof account !== 'string') {
+      console.error(`[XingePush unbindAccount] account is not a string.`)
+    }
     RNTXingePush.unbindAccount(account)
   },
 
@@ -126,6 +144,9 @@ export default {
    * @param {number} badge
    */
   setBadge(badge) {
+    if (typeof badge !== 'number') {
+      console.error(`[XingePush setBadge] badge is not a number.`)
+    }
     RNTXingePush.setBadge(badge)
   },
 

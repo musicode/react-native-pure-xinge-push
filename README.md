@@ -31,7 +31,7 @@ react-native link react-native-pure-xinge-push
 修改项目 `AppDelegate.m`，如下：
 
 ```
-
+// 导入
 #import <RNTXingePush/RNTXingePushModule.h>
 
 @implementation AppDelegate
@@ -46,6 +46,7 @@ react-native link react-native-pure-xinge-push
   return YES;
 }
 
+// 加上这句
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
   [RNTXingePushModule didReceiveRemoteNotification:userInfo fetchCompletionHandler:completionHandler];
 }
