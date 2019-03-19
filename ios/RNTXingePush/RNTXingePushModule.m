@@ -199,6 +199,10 @@ static NSMutableDictionary* XingePush_GetNotification(NSDictionary *userInfo) {
 
 RCT_EXPORT_MODULE(RNTXingePush);
 
++ (BOOL)requiresMainQueueSetup {
+    return YES;
+}
+
 - (instancetype)init {
     if (self = [super init]) {
         [[NSNotificationCenter defaultCenter] addObserver:self
@@ -210,7 +214,7 @@ RCT_EXPORT_MODULE(RNTXingePush);
 }
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter]removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (NSArray<NSString *> *)supportedEvents

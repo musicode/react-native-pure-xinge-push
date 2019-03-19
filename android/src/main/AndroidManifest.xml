@@ -1,9 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.github.musicode.xingepush">
 
-    <application android:networkSecurityConfig="@xml/xg_network_security_config">
-
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+    <application>
 
         <receiver
             android:name="com.github.musicode.xingepush.receiver.MessageReceiver"
