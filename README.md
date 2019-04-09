@@ -93,21 +93,30 @@ import XingePush from 'react-native-pure-xinge-push'
 // 安卓开启厂商推送
 XingePush.enableOtherPush(true)
 
-// 配置华为，appId 写在 `android/app/build.gradle`，这里不用传了
-// 这种脑残的方案也不知道是华为搞的还是信鸽搞的
-XingePush.setHuaweiDebug(true)
 // 配置小米 (string, string)
 XingePush.setXiaomi(appId, appKey)
 // 配置魅族 (string, string)
 XingePush.setMeizu(appId, appKey)
 
+// 配置华为，appId 写在 `android/app/build.gradle`，这里不用传了
+// 这种脑残的方案也不知道是华为搞的还是信鸽搞的
+// 开启华为的调试，如果不用就不调
+XingePush.setHuaweiDebug(true)
+
 // 安卓逻辑到此结束
 
+// 是否需要开启信鸽调试
+XingPush.setDebug(true)
+
 // 配置信鸽 (number, string)
+// 启动成功会触发 register 事件
 XingePush.start(xgAccessId, xgAccessKey)
 
+// 停止接收推送
+XingPush.stop()
+
 // 监听事件
-let result = XingePush.addEventListener('register', function (data) {
+let binder = XingePush.addEventListener('register', function (data) {
 
   // 信鸽错误码
   // ios: https://xg.qq.com/docs/ios_access/ios_returncode.html
@@ -116,7 +125,7 @@ let result = XingePush.addEventListener('register', function (data) {
     return
   }
 
-  // 获取 token
+  // 获取 deviceToken
   data.deviceToken
 
   // 绑定帐号 (string)
@@ -132,7 +141,7 @@ let result = XingePush.addEventListener('register', function (data) {
   XingePush.unbindTags(['tag1', 'tag2'])
 })
 // 解绑事件
-result.remove()
+binder.remove()
 
 // 透传消息
 XingePush.addEventListener('message', function (message) {
@@ -163,3 +172,14 @@ XingePush.addEventListener('notification', function (notification) {
 
 保证会及时跟进最新版 SDK，放心使用。
 
+## 打赏
+
+走过路过的都打赏一点吧，给点动力继续更新。
+
+微信
+
+<img src="https://user-images.githubusercontent.com/2732303/44254903-ce6d3f80-a236-11e8-86dd-f6b27a7f94df.png" width="200">
+
+支付宝
+
+<img src="https://user-images.githubusercontent.com/2732303/44254929-e5139680-a236-11e8-95e2-f5a864246f83.png" width="200">
