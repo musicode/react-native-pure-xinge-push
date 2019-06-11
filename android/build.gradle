@@ -16,9 +16,9 @@ android {
 
         consumerProguardFiles 'proguard-rules.pro'
         manifestPlaceholders = [
-            XG_ACCESS_ID: "",
-            XG_ACCESS_KEY: "",
-            HW_APPID: "",
+                XG_ACCESS_ID: "",
+                XG_ACCESS_KEY: "",
+                HW_APPID: "",
         ]
     }
     lintOptions {
@@ -31,7 +31,7 @@ dependencies {
 
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
 
-    implementation'com.tencent.xinge:xinge:4.3.2-beta'
+    implementation'com.tencent.xinge:xinge:4.3.2-release'
     // jg包
     implementation'com.tencent.jg:jg:1.1'
     // wup包
@@ -39,8 +39,8 @@ dependencies {
     // mid包，minSdkVersion 14
     implementation 'com.tencent.mid:mid:4.0.7-Release'
 
-    implementation 'com.tencent.xinge:mipush:4.3.2-xiaomi-beta'
-    implementation 'com.tencent.xinge:xgmz:4.3.2-meizu-beta'
-    implementation 'com.tencent.xinge:xghw:4.3.2-huawei-beta'
+    implementation 'com.tencent.xinge:mipush:4.3.2-xiaomi-release'
+    implementation 'com.tencent.xinge:xgmz:4.3.2-meizu-release'
+    implementation 'com.tencent.xinge:xghw:4.3.2-huawei-release'
 
 }
