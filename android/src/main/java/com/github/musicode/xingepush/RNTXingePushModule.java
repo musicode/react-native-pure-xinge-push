@@ -37,6 +37,10 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
 
     private int badge = 0;
 
+    private boolean started = false;
+
+    private WritableMap launchInfo;
+
     public RNTXingePushModule(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
@@ -80,14 +84,18 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
     @ReactMethod
     public void start(int accessId, String accessKey) {
 
+        started = true;
+
         XGPushConfig.setAccessId(reactContext, accessId);
         XGPushConfig.setAccessKey(reactContext, accessKey);
 
         XGPushManager.registerPush(reactContext, new XGIOperateCallback() {
             @Override
             public void onSuccess(Object data, int flag) {
+
                 onStart(XGPushBaseReceiver.SUCCESS);
                 onRegister(XGPushConfig.getToken(reactContext), XGPushBaseReceiver.SUCCESS);
+
             }
 
             @Override
@@ -95,6 +103,11 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
                 onStart(errCode);
             }
         });
+
+        if (launchInfo != null) {
+            sendEvent("notification", launchInfo);
+            launchInfo = null;
+        }
 
     }
 
@@ -258,7 +271,12 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
 
         map.putMap("custom_content", getCustomContent(customContent));
 
-        sendEvent("notification", map);
+        if (started) {
+            sendEvent("notification", map);
+        }
+        else {
+            launchInfo = map;
+        }
 
     }
 
@@ -317,6 +335,7 @@ public class RNTXingePushModule extends ReactContextBaseJavaModule implements Ac
     }
 
     private void registerReceivers() {
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Constant.ACTION_BIND_TAGS);
         intentFilter.addAction(Constant.ACTION_UNBIND_TAGS);
