@@ -72,6 +72,27 @@ public class MessageReceiver extends XGPushBaseReceiver {
         Intent intent = new Intent(Constant.ACTION_MESSAGE);
 
         String customContent = message.getCustomContent();
+        if (customContent == null || customContent.isEmpty()) {
+            // 某些第三方厂商会忽略自定义参数，因此用 content 做降级
+            String content = message.getContent();
+            // 如果 content 是个 json，就用他代替 customContent
+            if (content != null && content.startsWith("{") && content.endsWith("}")) {
+                customContent = content;
+
+                // 华为会多加一层 content
+                String prefix = "{\"content\":\"";
+                String suffix = "\"}";
+
+                if (customContent.startsWith(prefix)
+                    && customContent.endsWith(suffix)
+                ) {
+                    customContent = customContent.substring(prefix.length(), customContent.length() - suffix.length());
+                }
+
+                customContent = customContent.replaceAll("\\\\\"", "\"");
+            }
+        }
+
         intent.putExtra("customContent", customContent == null ? "" : customContent);
 
         context.sendBroadcast(intent);
