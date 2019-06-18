@@ -145,10 +145,15 @@ binder.remove()
 
 // 透传消息
 XingePush.addEventListener('message', function (message) {
+  // message 类型为对象
+
   // ios 通过静默消息实现
   // android 通过透传消息实现
   // 为了跨平台的兼容性，message 的数据全部来自 custom content
-  // message 类型为对象
+
+  // 安卓有些第三方厂商支持透传消息，却不支持 custom content
+  // 因此最好把透传消息的 content 字段设置为自定义参数的序列化 JSON 形式，比如 content = "{"cmd":"alert","content":"xxx"}"
+  // 此外，某些厂商通道会给 content 自动再加一层 content，导致调用 getContent() 方法获取到的真实 content 格式为 "{content: "传入的content"}"，因此建议 JSON 不要以 {"content": 开头，因为我会把自动加的这层给去掉。
 })
 
 // 推送消息
