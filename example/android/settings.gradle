@@ -1,3 +1,6 @@
 rootProject.name = 'example'
 
+include ':react-native-pure-xinge-push'
+project(':react-native-pure-xinge-push').projectDir = new File(rootProject.projectDir,  '../node_modules/react-native-pure-xinge-push/android')
+
 include ':app'

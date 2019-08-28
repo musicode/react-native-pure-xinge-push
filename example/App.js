@@ -14,10 +14,10 @@ import XingePush from 'react-native-pure-xinge-push'
 
 function alert(name, data) {
   console.log(name, data)
-  Alert.alert(
-    name,
-    JSON.stringify(data)
-  )
+  // Alert.alert(
+  //   name,
+  //   JSON.stringify(data)
+  // )
 }
 
 XingePush.addListener('start', function (data) {
@@ -48,6 +48,9 @@ XingePush.addListener('register', function (data) {
   alert('resgiter', data)
 })
 
+XingePush.addListener('message', function (data) {
+  alert('message', data)
+})
 XingePush.addListener('notification', function (data) {
   alert('notification', data)
 })
@@ -65,7 +68,26 @@ export default class App extends Component<Props> {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome} onPress={() => {
+          XingePush.setDebug(true)
+        }}>
+          setDebug(true)
+        </Text>
+
+        <Text style={styles.welcome} onPress={() => {
+          XingePush.enableOtherPush(true)
+        }}>
+          enableOtherPush(true)
+        </Text>
+
+        <Text style={styles.welcome} onPress={() => {
+          XingePush.setHuaweiDebug(true)
+        }}>
+          setHuaweiDebug(true)
+        </Text>
+
+        <Text style={styles.welcome} onPress={() => {
           XingePush.start(2200278495, 'IE8K3754YFRS')
+          // XingePush.start(2100279083, 'AX2NPJ35J13C')
         }}>
           start
         </Text>
@@ -102,16 +124,16 @@ export default class App extends Component<Props> {
           setBadge(0)
         </Text>
         <Text style={styles.welcome} onPress={() => {
+          XingePush.setBadge(10)
+        }}>
+          setBadge(10)
+        </Text>
+        <Text style={styles.welcome} onPress={() => {
           XingePush.getBadge().then(data => {
             alert('getBadge', data)
           })
         }}>
           getBadge()
-        </Text>
-        <Text style={styles.welcome} onPress={() => {
-          XingePush.setDebug(true)
-        }}>
-          setDebug(true)
         </Text>
 
       </View>
