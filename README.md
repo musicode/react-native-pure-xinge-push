@@ -2,13 +2,15 @@
 
 信鸽 SDK 版本：
 
-* ios: 3.3.5
-* android: 4.3.2
+- ios: 3.3.7
+- android: 4.3.2
 
 ## 安装
 
 ```
 npm i react-native-pure-xinge-push
+
+// 如果react-native的版本>=0.60，会自动link，无需执行下面的命令
 react-native link react-native-pure-xinge-push
 ```
 
@@ -18,11 +20,13 @@ react-native link react-native-pure-xinge-push
 
 `Build Phases` -> `Link Binary With Libraries` 添加下面几个库（先确定是否已添加...）：
 
-* CoreTelephony.framework
-* SystemConfiguration.framework
-* UserNotifications.framework
-* libz.tbd
-* libsqlite3.0.tbd
+- CoreTelephony.framework
+- SystemConfiguration.framework
+- UserNotifications.framework
+- libz.tbd
+- libsqlite3.0.tbd
+
+> 注意：如果 react-native 的版本>=0.60，需要手动将`node_modules/react-native-pure-xinge-push/ios/RNTXingePush/libXG-SDK.a`加入到你工程的 `Frameworks`
 
 `Capabilities` 打开推送
 
@@ -88,89 +92,85 @@ buildTypes {
 ## 用法
 
 ```js
-import XingePush from 'react-native-pure-xinge-push'
+import XingePush from "react-native-pure-xinge-push";
 
 // 安卓开启厂商推送
-XingePush.enableOtherPush(true)
+XingePush.enableOtherPush(true);
 
 // 配置小米 (string, string)
-XingePush.setXiaomi(appId, appKey)
+XingePush.setXiaomi(appId, appKey);
 // 配置魅族 (string, string)
-XingePush.setMeizu(appId, appKey)
+XingePush.setMeizu(appId, appKey);
 
 // 配置华为，appId 写在 `android/app/build.gradle`，这里不用传了
 // 这种脑残的方案也不知道是华为搞的还是信鸽搞的
 // 开启华为的调试，如果不用就不调
-XingePush.setHuaweiDebug(true)
+XingePush.setHuaweiDebug(true);
 
 // 安卓逻辑到此结束
 
 // 是否需要开启信鸽调试
-XingPush.setDebug(true)
+XingPush.setDebug(true);
 
 // 配置信鸽 (number, string)
 // 启动成功会触发 register 事件
-XingePush.start(xgAccessId, xgAccessKey)
+XingePush.start(xgAccessId, xgAccessKey);
 
 // 停止接收推送
-XingPush.stop()
+XingPush.stop();
 
 // 监听事件
-let binder = XingePush.addEventListener('register', function (data) {
-
+let binder = XingePush.addEventListener("register", function(data) {
   // 信鸽错误码
   // ios: https://xg.qq.com/docs/ios_access/ios_returncode.html
   // android: https://xg.qq.com/docs/android_access/android_returncode.html
   if (data.error) {
-    return
+    return;
   }
 
   // 获取 deviceToken
-  data.deviceToken
+  data.deviceToken;
 
   // 绑定帐号 (string)
-  XingePush.bindAccount('account')
+  XingePush.bindAccount("account");
 
   // 解除绑定帐号 (string)
-  XingePush.unbindAccount('account')
+  XingePush.unbindAccount("account");
 
   // 绑定标签 (Array)
-  XingePush.bindTags(['tag1', 'tag2'])
+  XingePush.bindTags(["tag1", "tag2"]);
 
   // 解除绑定标签 (Array)
-  XingePush.unbindTags(['tag1', 'tag2'])
-})
+  XingePush.unbindTags(["tag1", "tag2"]);
+});
 // 解绑事件
-binder.remove()
+binder.remove();
 
 // 透传消息
-XingePush.addEventListener('message', function (message) {
+XingePush.addEventListener("message", function(message) {
   // message 类型为对象
-
   // ios 通过静默消息实现
   // android 通过透传消息实现
   // 为了跨平台的兼容性，message 的数据全部来自 custom content
-
   // 安卓有些第三方厂商支持透传消息，却不支持 custom content
   // 因此最好把透传消息的 content 字段设置为自定义参数的序列化 JSON 形式，比如 content = "{"cmd":"alert","content":"xxx"}"
   // 此外，某些厂商通道会给 content 自动再加一层 content，导致调用 getContent() 方法获取到的真实 content 格式为 "{content: "传入的content"}"，因此建议 JSON 不要以 {"content": 开头，因为我会把自动加的这层给去掉。
-})
+});
 
 // 推送消息
-XingePush.addEventListener('notification', function (notification) {
-
+XingePush.addEventListener("notification", function(notification) {
   // 推送是否弹出展现了
-  notification.presented
+  notification.presented;
 
   // 推送是否被用户点击了
-  notification.clicked
+  notification.clicked;
 
   // 自定义的键值对
-  notification.custom_content
+  notification.custom_content;
 
   // 推送消息主体，安卓没法保证能取到正确的值，最好不要依赖这个字段
-  notification.body
-})
+  notification.body;
+});
 ```
 
 ## 声明
