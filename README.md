@@ -36,7 +36,7 @@ react-native link react-native-pure-xinge-push
 
 ```
 // 导入
-#import <RNTXingePush/RNTXingePushModule.h>
+#import <RNTXingePushModule.h>
 
 @implementation AppDelegate
 
