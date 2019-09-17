@@ -35,8 +35,10 @@ react-native link react-native-pure-xinge-push
 修改项目 `AppDelegate.m`，如下：
 
 ```
-// 导入
-#import <RNTXingePush/RNTXingePushModule.h>
+// RN >= 0.60
+#import <RNTXingePushModule.h>
+// RN < 0.60
+// #import <RNTXingePush/RNTXingePushModule.h>
 
 @implementation AppDelegate
 
