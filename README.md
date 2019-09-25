@@ -26,7 +26,7 @@ react-native link react-native-pure-xinge-push
 - libz.tbd
 - libsqlite3.0.tbd
 
-> 注意：如果 react-native 的版本>=0.60，需要手动将`node_modules/react-native-pure-xinge-push/ios/RNTXingePush/libXG-SDK.a`加入到你工程的 `Frameworks`
+> 注意：如果 react-native 的版本>=0.60，需要手动将`node_modules/react-native-pure-xinge-push/ios/RNTXingePush/libXG-SDK.a`加入到你工程的 `Frameworks`，引入的时候选`create groups`而不是`create folder references`
 
 `Capabilities` 打开推送
 
