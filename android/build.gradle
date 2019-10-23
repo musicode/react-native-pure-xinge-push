@@ -31,7 +31,7 @@ dependencies {
 
     implementation "me.leolin:ShortcutBadger:1.1.22@aar"
 
-    implementation'com.tencent.xinge:xinge:4.3.2-release'
+    implementation'com.tencent.xinge:xinge:4.3.5-release'
     // jg包
     implementation'com.tencent.jg:jg:1.1'
     // wup包
