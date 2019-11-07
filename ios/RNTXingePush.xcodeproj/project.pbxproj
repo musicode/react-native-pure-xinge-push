@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D12668C2233E64D0014936E /* XGPush.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9D8CCA5B2232B4FF00473496 /* XGPush.h */; };
 		9D8CCA132232B46A00473496 /* RNTXingePushModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 9D8CCA122232B46A00473496 /* RNTXingePushModule.m */; };
 		9D8CCA142232B46A00473496 /* RNTXingePushModule.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 9D8CCA112232B46A00473496 /* RNTXingePushModule.h */; };
-		9D8CCA5A2232B4F400473496 /* libXG-SDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D8CCA592232B4F400473496 /* libXG-SDK.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -20,7 +18,6 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				9D12668C2233E64D0014936E /* XGPush.h in CopyFiles */,
 				9D8CCA142232B46A00473496 /* RNTXingePushModule.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -31,8 +28,6 @@
 		9D8CCA0E2232B46A00473496 /* libRNTXingePush.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNTXingePush.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		9D8CCA112232B46A00473496 /* RNTXingePushModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNTXingePushModule.h; sourceTree = "<group>"; };
 		9D8CCA122232B46A00473496 /* RNTXingePushModule.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNTXingePushModule.m; sourceTree = "<group>"; };
-		9D8CCA592232B4F400473496 /* libXG-SDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libXG-SDK.a"; sourceTree = "<group>"; };
-		9D8CCA5B2232B4FF00473496 /* XGPush.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XGPush.h; sourceTree = "<group>"; };
 		9DCC8C052233A11800B71B82 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		9DCC8C072233A12000B71B82 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		9DCC8C092233A12A00B71B82 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
@@ -45,7 +40,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D8CCA5A2232B4F400473496 /* libXG-SDK.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,8 +66,6 @@
 		9D8CCA102232B46A00473496 /* RNTXingePush */ = {
 			isa = PBXGroup;
 			children = (
-				9D8CCA592232B4F400473496 /* libXG-SDK.a */,
-				9D8CCA5B2232B4FF00473496 /* XGPush.h */,
 				9D8CCA112232B46A00473496 /* RNTXingePushModule.h */,
 				9D8CCA122232B46A00473496 /* RNTXingePushModule.m */,
 			);

@@ -18,16 +18,6 @@ react-native link react-native-pure-xinge-push
 
 ### iOS
 
-`Build Phases` -> `Link Binary With Libraries` 添加下面几个库（先确定是否已添加...）：
-
-- CoreTelephony.framework
-- SystemConfiguration.framework
-- UserNotifications.framework
-- libz.tbd
-- libsqlite3.0.tbd
-
-> 注意：如果 react-native 的版本>=0.60，需要手动将`node_modules/react-native-pure-xinge-push/ios/RNTXingePush/libXG-SDK.a`加入到你工程的 `Frameworks`，引入的时候选`create groups`而不是`create folder references`
-
 `Capabilities` 打开推送
 
 ![](https://xg.qq.com/docs/assets/iOSXGCap.jpg)
@@ -35,10 +25,7 @@ react-native link react-native-pure-xinge-push
 修改项目 `AppDelegate.m`，如下：
 
 ```
-// RN >= 0.60
 #import <RNTXingePushModule.h>
-// RN < 0.60
-// #import <RNTXingePush/RNTXingePushModule.h>
 
 @implementation AppDelegate
 

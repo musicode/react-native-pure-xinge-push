@@ -11,7 +11,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, Alert} from 'react-native';
 
 import XingePush from 'react-native-pure-xinge-push'
-
+console.log(XingePush)
 function alert(name, data) {
   console.log(name, data)
   // Alert.alert(
@@ -20,38 +20,38 @@ function alert(name, data) {
   // )
 }
 
-XingePush.addListener('start', function (data) {
+XingePush.addEventListener('start', function (data) {
   alert('start', data)
 })
 
-XingePush.addListener('stop', function (data) {
+XingePush.addEventListener('stop', function (data) {
   alert('stop', data)
 })
 
-XingePush.addListener('bindAccount', function (data) {
+XingePush.addEventListener('bindAccount', function (data) {
   alert('bindAccount', data)
 })
 
-XingePush.addListener('unbindAccount', function (data) {
+XingePush.addEventListener('unbindAccount', function (data) {
   alert('unbindAccount', data)
 })
 
-XingePush.addListener('bindTag', function (data) {
+XingePush.addEventListener('bindTags', function (data) {
   alert('bindTag', data)
 })
 
-XingePush.addListener('unbindTag', function (data) {
+XingePush.addEventListener('unbindTags', function (data) {
   alert('unbindTag', data)
 })
 
-XingePush.addListener('register', function (data) {
+XingePush.addEventListener('register', function (data) {
   alert('resgiter', data)
 })
 
-XingePush.addListener('message', function (data) {
+XingePush.addEventListener('message', function (data) {
   alert('message', data)
 })
-XingePush.addListener('notification', function (data) {
+XingePush.addEventListener('notification', function (data) {
   alert('notification', data)
 })
 
