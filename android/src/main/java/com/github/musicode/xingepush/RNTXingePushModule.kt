@@ -81,14 +81,14 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
         XGPushConfig.setAccessKey(reactContext, accessKey)
 
         XGPushManager.registerPush(reactContext, object : XGIOperateCallback {
-            override fun onSuccess(data: Any, flag: Int) {
+            override fun onSuccess(data: Any?, flag: Int) {
 
                 onStart(XGPushBaseReceiver.SUCCESS)
                 onRegister(XGPushConfig.getToken(reactContext), XGPushBaseReceiver.SUCCESS)
 
             }
 
-            override fun onFail(data: Any, errCode: Int, msg: String) {
+            override fun onFail(data: Any?, errCode: Int, msg: String) {
                 onStart(errCode)
             }
         })
@@ -103,11 +103,11 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
     @ReactMethod
     fun stop() {
         XGPushManager.unregisterPush(reactContext, object : XGIOperateCallback {
-            override fun onSuccess(data: Any, flag: Int) {
+            override fun onSuccess(data: Any?, flag: Int) {
                 onStop(XGPushBaseReceiver.SUCCESS)
             }
 
-            override fun onFail(data: Any, errCode: Int, msg: String) {
+            override fun onFail(data: Any?, errCode: Int, msg: String) {
                 onStop(errCode)
             }
         })
@@ -116,11 +116,11 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
     @ReactMethod
     fun bindAccount(account: String) {
         XGPushManager.appendAccount(reactContext, account, object : XGIOperateCallback {
-            override fun onSuccess(data: Any, flag: Int) {
+            override fun onSuccess(data: Any?, flag: Int) {
                 onBindAccount(XGPushBaseReceiver.SUCCESS)
             }
 
-            override fun onFail(data: Any, errCode: Int, msg: String) {
+            override fun onFail(data: Any?, errCode: Int, msg: String) {
                 onBindAccount(errCode)
             }
         })
@@ -129,11 +129,11 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
     @ReactMethod
     fun unbindAccount(account: String) {
         XGPushManager.delAccount(reactContext, account, object : XGIOperateCallback {
-            override fun onSuccess(data: Any, flag: Int) {
+            override fun onSuccess(data: Any?, flag: Int) {
                 onUnbindAccount(XGPushBaseReceiver.SUCCESS)
             }
 
-            override fun onFail(data: Any, errCode: Int, msg: String) {
+            override fun onFail(data: Any?, errCode: Int, msg: String) {
                 onUnbindAccount(errCode)
             }
         })
