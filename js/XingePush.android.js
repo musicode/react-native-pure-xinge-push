@@ -1,7 +1,9 @@
 
-import { DeviceEventEmitter, NativeModules } from 'react-native'
+import { NativeEventEmitter, NativeModules } from 'react-native'
 
 const { RNTXingePush } = NativeModules
+
+const eventEmitter = new NativeEventEmitter(RNTXingePush)
 
 export default {
 
@@ -151,7 +153,7 @@ export default {
   },
 
   addEventListener(name, listener) {
-    return DeviceEventEmitter.addListener(name, listener)
+    return eventEmitter.addListener(name, listener)
   }
 
 }
