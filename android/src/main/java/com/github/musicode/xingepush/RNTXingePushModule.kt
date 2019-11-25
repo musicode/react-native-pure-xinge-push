@@ -30,12 +30,11 @@ import me.leolin.shortcutbadger.ShortcutBadger
 class RNTXingePushModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), ActivityEventListener, LifecycleEventListener {
 
     companion object {
+        var isStarted = false
         var launchIntent: Intent? = null
     }
 
     private var badge = 0
-
-    private var started = false
 
     private var launchInfo: WritableMap? = null
 
@@ -79,7 +78,7 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
     @ReactMethod
     fun start(accessId: Int, accessKey: String) {
 
-        started = true
+        isStarted = true
 
         XGPushConfig.setAccessId(reactContext, accessId.toLong())
         XGPushConfig.setAccessKey(reactContext, accessKey)
@@ -263,7 +262,7 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
 
         map.putMap("custom_content", getCustomContent(customContent))
 
-        if (started) {
+        if (isStarted) {
             sendEvent("notification", map)
         } else {
             launchInfo = map

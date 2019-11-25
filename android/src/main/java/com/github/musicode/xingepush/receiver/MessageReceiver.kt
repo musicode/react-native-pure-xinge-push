@@ -122,7 +122,9 @@ class MessageReceiver : XGPushBaseReceiver() {
 
         // 在 RNTXingePushModule 还没初始化时，这个方法就会执行
         // 因此为了获取到启动 app 的那条推送，这里需要存一下
-        RNTXingePushModule.launchIntent = intent
+        if (!RNTXingePushModule.isStarted) {
+            RNTXingePushModule.launchIntent = intent
+        }
 
     }
 
