@@ -5,6 +5,7 @@ import android.content.Intent
 import android.util.Log
 
 import com.github.musicode.xingepush.Constant
+import com.github.musicode.xingepush.RNTXingePushModule
 import com.tencent.android.tpush.XGPushBaseReceiver
 import com.tencent.android.tpush.XGPushClickedResult
 import com.tencent.android.tpush.XGPushRegisterResult
@@ -118,6 +119,10 @@ class MessageReceiver : XGPushBaseReceiver() {
         }
 
         context.sendBroadcast(intent)
+
+        // 在 RNTXingePushModule 还没初始化时，这个方法就会执行
+        // 因此为了获取到启动 app 的那条推送，这里需要存一下
+        RNTXingePushModule.launchIntent = intent
 
     }
 

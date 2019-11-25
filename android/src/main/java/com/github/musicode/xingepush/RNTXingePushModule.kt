@@ -29,6 +29,10 @@ import me.leolin.shortcutbadger.ShortcutBadger
 
 class RNTXingePushModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext), ActivityEventListener, LifecycleEventListener {
 
+    companion object {
+        var launchIntent: Intent? = null
+    }
+
     private var badge = 0
 
     private var started = false
@@ -95,8 +99,13 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
 
         if (launchInfo != null) {
             sendEvent("notification", launchInfo!!)
-            launchInfo = null
         }
+        else if (launchIntent != null) {
+            onNotifaction(launchIntent!!)
+        }
+
+        launchInfo = null
+        launchIntent = null
 
     }
 
@@ -303,10 +312,9 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
     }
 
     override fun onNewIntent(intent: Intent) {
-        val activity = currentActivity
-        if (activity != null) {
+        currentActivity?.let {
             // 后台运行时点击通知会调用
-            activity.intent = intent
+            it.intent = intent
         }
     }
 
