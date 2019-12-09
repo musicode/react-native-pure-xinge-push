@@ -306,7 +306,7 @@ class RNTXingePushModule(private val reactContext: ReactApplicationContext) : Re
 
     }
 
-    override fun onActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent) {
+    override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
 
     }
 
