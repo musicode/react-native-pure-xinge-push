@@ -3,7 +3,7 @@
 信鸽 SDK 版本：
 
 - ios: 3.3.7
-- android: 4.3.5
+- android: 4.3.7
 
 ## 安装
 
