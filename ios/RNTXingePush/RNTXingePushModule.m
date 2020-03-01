@@ -20,9 +20,9 @@ static NSDictionary *RNTXingePush_LaunchUserInfo = nil;
 
 // 获取自定义键值对
 static NSMutableDictionary* XingePush_GetCustomContent(NSDictionary *userInfo) {
-    
+
     NSMutableDictionary *customContent = [[NSMutableDictionary alloc] init];
-    
+
     NSEnumerator *enumerator = [userInfo keyEnumerator];
     id key;
     while ((key = [enumerator nextObject])) {
@@ -30,7 +30,7 @@ static NSMutableDictionary* XingePush_GetCustomContent(NSDictionary *userInfo) {
             customContent[key] = userInfo[key];
         }
     }
-    
+
     return customContent;
 };
 
@@ -39,18 +39,28 @@ static NSMutableDictionary* XingePush_GetNotification(NSDictionary *userInfo) {
 
     NSDictionary *customContent = XingePush_GetCustomContent(userInfo);
 
-    NSDictionary *alert = userInfo[@"aps"][@"alert"];
-    
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    dict[@"custom_content"] = customContent;
-    dict[@"body"] = @{
-                      @"title": alert[@"title"] ?: @"",
-                      @"subtitle": alert[@"subtitle"] ?: @"",
-                      @"content": alert[@"body"] ?: @""
-                      };
+    NSMutableDictionary *resultDict = [[NSMutableDictionary alloc] init];
+    resultDict[@"custom_content"] = customContent;
 
-    return dict;
-    
+    NSDictionary *alertDict = userInfo[@"aps"][@"alert"];
+    if (alertDict) {
+        resultDict[@"body"] = @{
+                          @"title": alertDict[@"title"] ?: @"",
+                          @"subtitle": alertDict[@"subtitle"] ?: @"",
+                          @"content": alertDict[@"body"] ?: @""
+                          };
+    }
+    else {
+        NSString *alertStr = userInfo[@"aps"][@"alert"];
+        resultDict[@"body"] = @{
+                          @"title": alertStr ?: @"",
+                          @"subtitle": @"",
+                          @"content": @""
+                          };
+    }
+
+    return resultDict;
+
 };
 
 @implementation RNTXingePushModule
@@ -74,9 +84,9 @@ static NSMutableDictionary* XingePush_GetNotification(NSDictionary *userInfo) {
 
     [[XGPush defaultManager] reportXGNotificationInfo:userInfo];
     [[NSNotificationCenter defaultCenter] postNotificationName:XingePushEvent_RemoteNotification object:userInfo];
-    
+
     completionHandler(UIBackgroundFetchResultNewData);
-    
+
 }
 
 // 信鸽服务启动的回调
@@ -148,7 +158,7 @@ static NSMutableDictionary* XingePush_GetNotification(NSDictionary *userInfo) {
         // 推送消息
         NSMutableDictionary *dict = XingePush_GetNotification(userInfo);
         dict[@"presented"] = @YES;
-        
+
         [self sendEventWithName:XingePushEvent_Notification body:dict];
     }
 
@@ -170,7 +180,7 @@ static NSMutableDictionary* XingePush_GetNotification(NSDictionary *userInfo) {
     NSDictionary *userInfo = notification.request.content.userInfo;
 
     [[XGPush defaultManager] reportXGNotificationResponse:response];
-    
+
     NSMutableDictionary *dict = XingePush_GetNotification(userInfo);
     dict[@"clicked"] = @YES;
     [self sendEventWithName:XingePushEvent_Notification body:dict];
@@ -184,9 +194,9 @@ static NSMutableDictionary* XingePush_GetNotification(NSDictionary *userInfo) {
                withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler __IOS_AVAILABLE(10.0) {
 
     NSDictionary *userInfo = notification.request.content.userInfo;
-    
+
     [[XGPush defaultManager] reportXGNotificationInfo:userInfo];
-    
+
     NSMutableDictionary *dict = XingePush_GetNotification(userInfo);
     dict[@"presented"] = @YES;
     [self sendEventWithName:XingePushEvent_Notification body:dict];
